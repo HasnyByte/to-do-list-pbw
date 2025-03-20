@@ -38,12 +38,12 @@
 }
 
 .bullet-list-item::before {
-  content: "\2022"; /* Unicode bullet point character */
-  margin-right: 2px; /* Adjust the spacing between the bullet point and text */
+  content: "\2022";
+  margin-right: 2px;
 }
 
 .list-item {
   display: flex;
-  align-items: center; /* Vertically align content */
-  margin-bottom: 8px; /* Adjust the margin as needed */
+  align-items: center;
+  margin-bottom: 8px;
 }

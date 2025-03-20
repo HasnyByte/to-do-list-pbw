@@ -29,7 +29,7 @@ const TodoList = () => {
   };
 
   const handleRemoveTask = (index) => {
-    const updatedTasks = tasks.filter((task, i) => i !== index);
+    const updatedTasks = tasks.filter((_, i) => i !== index);
     setTasks(updatedTasks);
   };
 
@@ -42,9 +42,7 @@ const TodoList = () => {
   const handleUpdateTask = () => {
     if (editTask.trim() !== '') {
       const updatedTasks = tasks.map((task, index) =>
-        index === editingIndex
-          ? { task: editTask, dueDate: editDueDate }
-          : task
+          index === editingIndex ? { task: editTask, dueDate: editDueDate } : task
       );
       setTasks(updatedTasks);
       setEditingIndex(-1);
@@ -54,138 +52,113 @@ const TodoList = () => {
   };
 
   const formatDate = (date) => {
+    if (!date) return '-';
     const [month, day, year] = new Date(date).toLocaleDateString().split('/');
     return `${day}-${month}-${year.slice(-2)}`;
   };
 
-
   return (
-    <>
-      <div className="max-w-lg mx-auto mt-10 p-4 border rounded shadow-lg">
+      <>
+        <div className="max-w-lg mx-auto mt-10 p-4 border rounded shadow-lg">
+          <h1 className="text-2xl mb-4 text-center">Todo List</h1>
 
-        <h1 className="text-2xl mb-4 text-center">Todo List</h1>
+          <div className="flex">
+            <input
+                type="text"
+                value={newTask}
+                onChange={handleInputChange}
+                placeholder="Enter new task..."
+                className="flex-grow px-2 py-1 border border-blue-700 focus:outline-blue-700 rounded mr-2"
+            />
 
-        <div className="flex">
+            <input
+                type="date"
+                value={dueDate}
+                onChange={handleDueDateChange}
+                className="px-2 py-1 border border-blue-700 focus:outline-blue-700 rounded mr-2"
+            />
 
-          <input
-            type="text"
-            value={newTask}
-            onChange={handleInputChange}
-            placeholder="Enter new task..."
-            className="flex-grow px-2 py-1 border border-blue-700  focus:outline-blue-700 rounded mr-2"
-          />
-
-          <input
-            type="date"
-            value={dueDate}
-            onChange={handleDueDateChange}
-            placeholder="Due date"
-            className="px-2 py-1 border border-blue-700  focus:outline-blue-700 rounded mr-2"
-          />
-
-          <button
-            onClick={handleAddTask}
-            className="bg-purple-500 text-white px-4 py-2 rounded"
-          >
-            Add Task
-          </button>
-
+            <button
+                onClick={handleAddTask}
+                className="bg-purple-500 text-white px-4 py-2 rounded"
+            >
+              Add Task
+            </button>
+          </div>
         </div>
 
-      </div>
+        {/* Tasks Field */}
+        <div className="max-w-2xl mx-auto mt-10 p-2 border rounded shadow-lg border-blue-700">
+          <table className="w-full">
+            <thead>
+            <tr>
+              <th className="text-lg pl-5">No</th>
+              <th className="text-lg pl-5">Tasks</th>
+              <th className="text-lg pl-5">Due Date</th>
+              <th className="text-lg pl-5">Action</th>
+            </tr>
+            </thead>
+          </table>
 
+          <hr className="border w-full mt-3" />
 
-      {/* Tasks Field */}
+          {/* Unordered List */}
+          <ul className="mt-2">
+            {tasks.map((task, index) => (
+                <li key={index} className="flex items-center border-b py-2">
+                  <div className="w-8 font-bold">{index + 1}.</div> {/* Menampilkan nomor urut */}
 
-      <div className="max-w-2xl mx-auto mt-10 p-2 border rounded shadow-lg  border-blue-700">
-
-        <tbody>
-
-          <thead>
-            <th className='text-lg pl-20'>Tasks</th>
-            <th className='pl-52  text-lg'>Due Date</th>
-            <th className='pl-28 text-lg'>Action</th>
-          </thead>
-
-        </tbody>
-
-        <hr className=' border w-full mt-3' />
-
-        {/* unordered list */}
-        <ul className="mt-2">
-
-          {tasks.map((task, index) => (
-
-            <li key={index} className="flex items-center  border-b py-2 bullet-list-item list-items">
-
-             {editingIndex === index ? (
-                <>
-
-                  <textarea name="text" id="" cols="1" rows="1"  
-                  value={editTask} 
-                  onChange={(e) => setEditTask(e.target.value)}
-                   className="flex-grow px-2 py-1 border rounded mr-2
-                   border-blue-500 focus:outline-blue-600"
-                  >
-                  </textarea>
-
-                  <input
-                    type="date"
-                    value={editDueDate}
-                    onChange={(e) => setEditDueDate(e.target.value)}
-                    className=" py-1 px-1 border border-blue-700  focus:outline-blue-700 rounded "
+                  {editingIndex === index ? (
+                      <>
+                  <textarea
+                      value={editTask}
+                      onChange={(e) => setEditTask(e.target.value)}
+                      className="flex-grow px-2 py-1 border rounded mr-2 border-blue-500 focus:outline-blue-600"
                   />
 
-                </>
-              ) : (
-                <>
-                  <div className="overflow-hidden overflow-ellipsis w-72 pl-3 flex">{task.task}</div>
-                  <div className='pl-10'>{formatDate(task.dueDate)}</div>
-                </>
-              )}
+                        <input
+                            type="date"
+                            value={editDueDate}
+                            onChange={(e) => setEditDueDate(e.target.value)}
+                            className="py-1 px-1 border border-blue-700 focus:outline-blue-700 rounded"
+                        />
+                      </>
+                  ) : (
+                      <>
+                        <div className="overflow-hidden overflow-ellipsis w-72 pl-3 flex">{task.task}</div>
+                        <div className="pl-10">{formatDate(task.dueDate)}</div>
+                      </>
+                  )}
 
-              <div className='ml-24'>
+                  <div className="ml-24">
+                    {editingIndex === index ? (
+                        <button
+                            onClick={handleUpdateTask}
+                            className="bg-green-600 text-white px-2 py-1 rounded mr-3"
+                        >
+                          Save
+                        </button>
+                    ) : (
+                        <button
+                            onClick={() => handleEditTask(index)}
+                            className="bg-yellow-600 text-white px-2 py-1 rounded mr-3"
+                        >
+                          Edit
+                        </button>
+                    )}
 
-                {/* Save Button */}
-                {editingIndex === index ? (
-
-                  <button
-                    onClick={handleUpdateTask}
-                    className="bg-green-600 text-white px-2 py-1 rounded mr-3"
-                  >
-                    Save
-                  </button>
-
-                ) : (
-
-                  // Edit Button
-                  <button
-                    onClick={() => handleEditTask(index)}
-                    className="bg-yellow-600 text-white px-2 py-1 rounded mr-3"
-                  >
-                    Edit
-                  </button>
-
-                )}
-
-                {/* Remove Button */}
-                <button
-                  onClick={() => handleRemoveTask(index)}
-                  className="bg-red-600 text-white px-2 py-1 rounded mr-2"
-                >
-                  Remove
-                </button>
-
-              </div>
-
-            </li>
-          ))}
-
-        </ul>
-
-      </div>
-
-    </>
+                    <button
+                        onClick={() => handleRemoveTask(index)}
+                        className="bg-red-600 text-white px-2 py-1 rounded mr-2"
+                    >
+                      Remove
+                    </button>
+                  </div>
+                </li>
+            ))}
+          </ul>
+        </div>
+      </>
   );
 };
 
